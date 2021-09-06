@@ -71,7 +71,7 @@ class FirstFragment : Fragment() {
             if (getItemViewType(position) == 1) {
 
                 val v = Button(parent?.context)
-                v.text = "a Button View"
+                v.text = "a Button View $position"
 
                 v.setOnClickListener({
                     if (myCount == count1) {
@@ -86,7 +86,7 @@ class FirstFragment : Fragment() {
                 return v
             } else {
                 val v = TextView(parent?.context)
-                v.text = "a Text View"
+                v.text = "a Text View $position"
                 return v
             }
         }
