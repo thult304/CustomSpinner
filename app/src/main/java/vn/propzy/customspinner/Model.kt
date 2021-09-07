@@ -31,6 +31,7 @@ object CreateFakeData {
 
             result.add(group)
         }
+        result[0].isExpended = true
         return result
     }
 }

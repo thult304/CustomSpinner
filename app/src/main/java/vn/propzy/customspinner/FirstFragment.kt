@@ -79,10 +79,14 @@ class FirstFragment : Fragment() {
             convertView: View?,
             parent: ViewGroup?
         ): View {
+            //should change it to another layout, we only use this temporarily for demo
+            //it should not use from getDropDownChildItemView
             return createChildView(convertView, parent, data[group].children?.get(child))
         }
 
         override fun getGroupItemView(group: Int, convertView: View?, parent: ViewGroup?): View {
+            //should change it to another layout, we only use this temporarily for demo
+            //it should not use from getDropDownGroupItemView
             return createParentView(convertView, parent, data[group])
         }
 
