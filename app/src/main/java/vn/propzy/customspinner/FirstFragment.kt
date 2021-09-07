@@ -73,6 +73,19 @@ class FirstFragment : Fragment() {
             return 0
         }
 
+        override fun getChildItemView(
+            group: Int,
+            child: Int,
+            convertView: View?,
+            parent: ViewGroup?
+        ): View {
+            return createChildView(convertView, parent, data[group].children?.get(child))
+        }
+
+        override fun getGroupItemView(group: Int, convertView: View?, parent: ViewGroup?): View {
+            return createParentView(convertView, parent, data[group])
+        }
+
         override fun getDropDownChildItemView(
             group: Int,
             child: Int,

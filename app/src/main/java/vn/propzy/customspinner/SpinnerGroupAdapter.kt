@@ -11,6 +11,10 @@ interface SpinnerGroupAdapterInfo {
     fun getItemCountInGroup(group: Int): Int
     fun getDropDownChildItemView(group: Int, child: Int, convertView: View?, parent: ViewGroup?): View
     fun getDropDownGroupItemView(group: Int, convertView: View?, parent: ViewGroup?): View
+
+    fun getChildItemView(group: Int, child: Int, convertView: View?, parent: ViewGroup?): View
+    fun getGroupItemView(group: Int, convertView: View?, parent: ViewGroup?): View
+
     fun getGroupItem(group: Int): Any
     fun getChildItem(group: Int, child: Int): Any
 }
@@ -52,9 +56,9 @@ abstract class SpinnerGroupAdapter : BaseAdapter(),
         var positionInfo = calculateGroupPosition(position)
 
         return if (positionInfo.child < 0) {
-            getDropDownGroupItemView(positionInfo.group, convertView, parent)
+            getGroupItemView(positionInfo.group, convertView, parent)
         } else {
-            getDropDownChildItemView(positionInfo.group, positionInfo.child, convertView, parent)
+            getChildItemView(positionInfo.group, positionInfo.child, convertView, parent)
         }
     }
 
