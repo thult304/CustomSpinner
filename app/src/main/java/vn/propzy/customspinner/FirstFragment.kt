@@ -41,64 +41,91 @@ class FirstFragment : Fragment() {
 
     }
 
-    class CustomSpinnerAdapter(var context: Context, var data: MutableList<LevelJoined>) :
-        BaseAdapter() {
+    class CustomSpinnerAdapter(var context: Context, var data: MutableList<TypeGroup>) :
+        SpinnerGroupAdapter() {
 
-        override fun getCount(): Int {
+        override fun getChildItemViewType(group: Int, child: Int): Int {
+            return 2
+        }
+
+        override fun getGroupItemViewType(group: Int): Int {
+            return 1
+        }
+
+        override fun getGroupItem(group: Int): Any {
+            return data[group]
+        }
+
+        override fun getChildItem(group: Int, child: Int): Any {
+            return data[group]?.children?.get(child) ?: TypeItem()
+        }
+
+        override fun getGroupCount(): Int {
             return data.size
         }
 
-        override fun getItem(position: Int): LevelJoined {
-            return data[position]
-        }
+        override fun getItemCountInGroup(group: Int): Int {
 
-        override fun getItemId(position: Int): Long {
-            return data[position].toString().toLong()
-        }
-
-        override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-            return createItemView(position, convertView, parent)
-        }
-
-        override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup?): View {
-            return createItemView(position, convertView, parent)
-        }
-
-        private fun createItemView(position: Int, convertView: View?, parent: ViewGroup?): View {
-            val convertViewLocal: View
-            val item = data[position]
-            convertViewLocal = when {
-                item.isParent() -> createParentView(convertView, parent, item)
-                else -> createChildView(convertView, parent, item)
+            if (data[group].isExpended) {
+                return data[group].children?.size ?: 0
             }
-            return convertViewLocal
+
+            return 0
+        }
+
+        override fun getDropDownChildItemView(
+            group: Int,
+            child: Int,
+            convertView: View?,
+            parent: ViewGroup?
+        ): View {
+            return createChildView(convertView, parent, data[group].children?.get(child))
+        }
+
+        override fun getDropDownGroupItemView(
+            group: Int,
+            convertView: View?,
+            parent: ViewGroup?
+        ): View {
+            return createParentView(convertView, parent, data[group])
         }
 
         private fun createChildView(
             convertView: View?,
             parent: ViewGroup?,
-            item: LevelJoined,
+            item: TypeItem?,
         ): View {
             val view = LayoutInflater.from(context).inflate(
                 R.layout.item_spinner_property_type_child,
                 parent,
                 false
             )
-            view.findViewById<TextView>(R.id.tvTitle).text = item.level2?.name
+            view.findViewById<TextView>(R.id.tvTitle).text = item?.name
             return view
         }
 
         private fun createParentView(
             convertView: View?,
             parent: ViewGroup?,
-            item: LevelJoined,
+            item: TypeGroup,
         ): View {
             val view = LayoutInflater.from(context).inflate(
                 R.layout.item_spinner_property_type_parent,
                 parent,
                 false
             )
-            view.findViewById<TextView>(R.id.tvTitle).text = item.level1?.name
+            view.findViewById<TextView>(R.id.tvTitle).text = item.name
+
+            view.setOnClickListener {
+
+                val selectedItem = data.firstOrNull { it.isExpended }
+
+                selectedItem?.isExpended = false
+
+                item.isExpended = true
+
+                notifyDataSetChanged()
+            };
             return view
         }
 
