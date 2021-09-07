@@ -1,5 +1,6 @@
 package vn.propzy.customspinner
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -23,7 +24,7 @@ class FirstFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
 
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
@@ -35,7 +36,71 @@ class FirstFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
 
-        binding.spinner.adapter = MyCustom()
+        binding.spinner.adapter =
+            CustomSpinnerAdapter(requireContext(), CreateFakeData.dataSpinner())
+
+    }
+
+    class CustomSpinnerAdapter(var context: Context, var data: MutableList<LevelJoined>) :
+        BaseAdapter() {
+
+        override fun getCount(): Int {
+            return data.size
+        }
+
+        override fun getItem(position: Int): LevelJoined {
+            return data[position]
+        }
+
+        override fun getItemId(position: Int): Long {
+            return data[position].toString().toLong()
+        }
+
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+            return createItemView(position, convertView, parent)
+        }
+
+        override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup?): View {
+            return createItemView(position, convertView, parent)
+        }
+
+        private fun createItemView(position: Int, convertView: View?, parent: ViewGroup?): View {
+            val convertViewLocal: View
+            val item = data[position]
+            convertViewLocal = when {
+                item.isParent() -> createParentView(convertView, parent, item)
+                else -> createChildView(convertView, parent, item)
+            }
+            return convertViewLocal
+        }
+
+        private fun createChildView(
+            convertView: View?,
+            parent: ViewGroup?,
+            item: LevelJoined,
+        ): View {
+            val view = LayoutInflater.from(context).inflate(
+                R.layout.item_spinner_property_type_child,
+                parent,
+                false
+            )
+            view.findViewById<TextView>(R.id.tvTitle).text = item.level2?.name
+            return view
+        }
+
+        private fun createParentView(
+            convertView: View?,
+            parent: ViewGroup?,
+            item: LevelJoined,
+        ): View {
+            val view = LayoutInflater.from(context).inflate(
+                R.layout.item_spinner_property_type_parent,
+                parent,
+                false
+            )
+            view.findViewById<TextView>(R.id.tvTitle).text = item.level1?.name
+            return view
+        }
 
     }
 
@@ -73,15 +138,15 @@ class FirstFragment : Fragment() {
                 val v = Button(parent?.context)
                 v.text = "a Button View $position"
 
-                v.setOnClickListener({
-                    if (myCount == count1) {
-                        myCount = count2
+                v.setOnClickListener {
+                    myCount = if (myCount == count1) {
+                        count2
                     } else {
-                        myCount = count1
+                        count1
                     }
 
                     notifyDataSetChanged()
-                })
+                }
 
                 return v
             } else {
